@@ -124,6 +124,20 @@ class Pwned:
                 table.append(pwned.support.LeagueTablePosition.from_api_call(position))
     
             return table
+
+    def get_league_scoring_models(self, type=None):
+        if type:
+            response = self._request('leagues/scoringmodels/' + type)
+        else:
+            response = self._request('leagues/scoringmodels', 'GET')
+        
+        if not response is None:
+            scoring_models = []
+            
+            for scoring_model in response:
+                scoring_models.append(pwned.support.LeagueScoringModel.from_api_call(scoring_model))
+            
+            return scoring_models
             
     def league_set_championship_round_results(self, league_id, round_number, results):
         data = []

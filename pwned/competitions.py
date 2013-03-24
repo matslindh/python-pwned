@@ -1,4 +1,4 @@
-from pwned.support import Game, ScoringModel
+from pwned.support import Game, LeagueScoringModel
 
 class Competition:
     _fields = {
@@ -179,7 +179,7 @@ class League(Competition):
         league = Competition.from_api_call(cls, data, cls.__fields, client=client)
         
         if 'scoringModel' in data:
-            league.scoring_model = ScoringModel.from_api_call(data['scoringModel'])
+            league.scoring_model = LeagueScoringModel.from_api_call(data['scoringModel'])
         
         return league
         

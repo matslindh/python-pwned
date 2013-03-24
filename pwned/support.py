@@ -17,7 +17,7 @@ class Game:
     def from_api_call(*args, **kwargs):
         return from_api_call_impl(*args, **kwargs)
         
-class ScoringModel:
+class LeagueScoringModel:
     _fields = {
         'id': ('id', ),
         'type': ('type', ),
@@ -34,6 +34,9 @@ class ScoringModel:
     def __init__(self, *args, **kwargs):
         object_init_impl(self, *args, **kwargs)
 
+    def get_api_dict(self, *args, **kwargs):
+        return get_api_dict_impl(self, *args, **kwargs)        
+        
     @classmethod
     def from_api_call(*args, **kwargs):
         return from_api_call_impl(*args, **kwargs)

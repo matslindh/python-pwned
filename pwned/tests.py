@@ -275,6 +275,20 @@ class PwnedTests(unittest.TestCase):
         self.assertEqual(league.id, league_fetched.id)
         self.assertEqual(2, league_fetched.round_current)
     
+    def test_get_league_scoring_models(self):
+        scoring_models = self.pwned_client.get_league_scoring_models()
+        
+        self.assertNotEqual(0, len(scoring_models))
+        
+        for scoring_model in scoring_models:
+            self.assertTrue(scoring_model.id)
+            self.assertTrue(scoring_model.name)
+            
+            if scoring_model.type == 'championship':
+                self.assertNotEqual(0, len(scoring_model.points_position))
+            else:
+                self.assertTrue(scoring_model.points_win)
+    
     def test_get_games(self):
         games = self.pwned_client.get_games()
         
