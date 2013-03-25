@@ -284,6 +284,7 @@ class PwnedTests(unittest.TestCase):
             self.assertTrue(scoring_model.id)
             self.assertTrue(scoring_model.name)
             self.assertTrue(scoring_model.type)
+            self.assertTrue(scoring_model.active)
             
             if scoring_model.type == 'championship':
                 self.assertNotEqual(0, len(scoring_model.points_position))
@@ -391,6 +392,77 @@ class PwnedTests(unittest.TestCase):
         scoring_model_fetched = self.pwned_client.get_league_scoring_model(scoring_model_created.id)
         self.assertTrue(scoring_model_fetched.active)
     
+    def test_create_championship_scoring_model(self):
+        values = {
+            'type': 'championship',
+            'name': 'Create Scoring Model ' + str(random.randint(1, 4000000)),
+            'description': 'This is a description ' + str(random.randint(1, 4000000)),
+            'points_position': {
+                1: 25,
+                2: 18,
+                3: 15,
+                4: 12,
+                5: 10,
+                6: 8,
+                7: 6,
+                8: 4,
+                9: 2,
+                10: 1,
+            },
+        }
+    
+        scoring_model = pwned.support.LeagueScoringModel(**values)
+        scoring_model_created = self.pwned_client.create_league_scoring_model(scoring_model)
+        scoring_model_fetched = self.pwned_client.get_league_scoring_model(scoring_model_created.id)
+        
+        self.assertEqual(scoring_model_fetched.type, values['type'])
+        self.assertEqual(scoring_model_fetched.name, values['name'])
+        self.assertEqual(scoring_model_fetched.description, values['description'])
+        self.assertFalse(scoring_model_fetched.points_win)
+        self.assertFalse(scoring_model_fetched.points_draw)
+        self.assertFalse(scoring_model_fetched.points_loss)
+        
+        for position in scoring_model_fetched.points_position:
+            self.assertEqual(scoring_model_fetched.points_position[str(position)], values['points_position'][int(position)])
+        
+        self.pwned_client.delete_league_scoring_model(scoring_model_fetched.id)    
+
+    def test_update_championship_scoring_model(self):
+        values = {
+            'type': 'championship',
+            'name': 'Create Scoring Model ' + str(random.randint(1, 4000000)),
+            'description': 'This is a description ' + str(random.randint(1, 4000000)),
+            'points_position': {
+                1: 25,
+                2: 18,
+                3: 15,
+                4: 12,
+                5: 10,
+                6: 8,
+                7: 6,
+                8: 4,
+                9: 2,
+                10: 1,
+            },
+        }
+    
+        scoring_model = pwned.support.LeagueScoringModel(**values)
+        scoring_model_created = self.pwned_client.create_league_scoring_model(scoring_model)
+        
+        scoring_model_created.points_position = {
+            1: 38,
+            2: 18,
+            3: 5,
+        }
+        
+        self.pwned_client.update_league_scoring_model(scoring_model_created)
+        scoring_model_fetched = self.pwned_client.get_league_scoring_model(scoring_model_created.id)
+        
+        for position in scoring_model_fetched.points_position:
+            self.assertEqual(scoring_model_fetched.points_position[str(position)], scoring_model_created.points_position[int(position)])
+        
+        self.pwned_client.delete_league_scoring_model(scoring_model_fetched.id)   
+        
     def test_get_games(self):
         games = self.pwned_client.get_games()
         
