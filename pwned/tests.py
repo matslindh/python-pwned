@@ -301,6 +301,96 @@ class PwnedTests(unittest.TestCase):
         self.assertTrue(scoring_model.name)
         self.assertTrue(scoring_model.type)
     
+    def test_create_scoring_model(self):
+        values = {
+            'type': 'league',
+            'name': 'Create Scoring Model ' + str(random.randint(1, 4000000)),
+            'description': 'This is a description ' + str(random.randint(1, 4000000)),
+            'points_win': 3,
+            'points_draw': 2,
+            'points_loss': 1,
+        }
+    
+        scoring_model = pwned.support.LeagueScoringModel(**values)
+        scoring_model_created = self.pwned_client.create_league_scoring_model(scoring_model)
+        scoring_model_fetched = self.pwned_client.get_league_scoring_model(scoring_model_created.id)
+        
+        self.assertEqual(scoring_model_fetched.type, values['type'])
+        self.assertEqual(scoring_model_fetched.name, values['name'])
+        self.assertEqual(scoring_model_fetched.description, values['description'])
+        self.assertEqual(scoring_model_fetched.points_win, values['points_win'])
+        self.assertEqual(scoring_model_fetched.points_draw, values['points_draw'])
+        self.assertEqual(scoring_model_fetched.points_loss, values['points_loss'])
+        
+        self.pwned_client.delete_league_scoring_model(scoring_model_fetched.id)
+    
+    def test_update_scoring_model(self):
+        values = {
+            'type': 'league',
+            'name': 'Create Scoring Model ' + str(random.randint(1, 4000000)),
+            'description': 'This is a description ' + str(random.randint(1, 4000000)),
+            'points_win': 3,
+            'points_draw': 2,
+            'points_loss': 1,
+        }
+    
+        scoring_model = pwned.support.LeagueScoringModel(**values)
+        scoring_model_created = self.pwned_client.create_league_scoring_model(scoring_model)
+        scoring_model_created.name = 'Updated Scoring Model' + str(random.randint(1, 4000000))
+        scoring_model_created.description = 'Updated description ' + str(random.randint(1, 4000000))
+        
+        self.pwned_client.update_league_scoring_model(scoring_model_created)
+        
+        scoring_model_fetched = self.pwned_client.get_league_scoring_model(scoring_model_created.id)
+        
+        self.assertEqual(scoring_model_fetched.name, scoring_model_created.name)
+        self.assertEqual(scoring_model_fetched.description, scoring_model_created.description)
+    
+    def test_delete_scoring_model(self):
+        values = {
+            'type': 'league',
+            'name': 'Create Scoring Model ' + str(random.randint(1, 4000000)),
+            'description': 'This is a description ' + str(random.randint(1, 4000000)),
+            'points_win': 3,
+            'points_draw': 2,
+            'points_loss': 1,
+        }
+    
+        scoring_model = pwned.support.LeagueScoringModel(**values)
+        scoring_model_created = self.pwned_client.create_league_scoring_model(scoring_model)
+        scoring_model_fetched = self.pwned_client.get_league_scoring_model(scoring_model_created.id)
+        self.assertTrue(scoring_model_fetched.id)
+        
+        self.pwned_client.delete_league_scoring_model(scoring_model_fetched.id)
+        scoring_model_fetched = self.pwned_client.get_league_scoring_model(scoring_model_created.id)
+        
+        self.assertFalse(scoring_model_fetched.active)
+
+    def test_restore_scoring_model(self):
+        values = {
+            'type': 'league',
+            'name': 'Create Scoring Model ' + str(random.randint(1, 4000000)),
+            'description': 'This is a description ' + str(random.randint(1, 4000000)),
+            'points_win': 3,
+            'points_draw': 2,
+            'points_loss': 1,
+        }
+    
+        scoring_model = pwned.support.LeagueScoringModel(**values)
+        scoring_model_created = self.pwned_client.create_league_scoring_model(scoring_model)
+        scoring_model_fetched = self.pwned_client.get_league_scoring_model(scoring_model_created.id)
+        self.assertTrue(scoring_model_fetched.id)
+        
+        self.pwned_client.delete_league_scoring_model(scoring_model_fetched.id)
+        scoring_model_fetched = self.pwned_client.get_league_scoring_model(scoring_model_created.id)
+        
+        self.assertFalse(scoring_model_fetched.active)
+        
+        scoring_model_fetched.active = True
+        self.pwned_client.update_league_scoring_model(scoring_model_fetched)
+        scoring_model_fetched = self.pwned_client.get_league_scoring_model(scoring_model_created.id)
+        self.assertTrue(scoring_model_fetched.active)
+    
     def test_get_games(self):
         games = self.pwned_client.get_games()
         

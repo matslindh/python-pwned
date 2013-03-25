@@ -144,6 +144,18 @@ class Pwned:
         
         if not response is None:
             return pwned.support.LeagueScoringModel.from_api_call(response)
+
+    def create_league_scoring_model(self, scoring_model):
+        response = self._request('leagues/scoringmodels/', 'POST', scoring_model.get_api_dict())
+        
+        if not response is None:
+            return pwned.support.LeagueScoringModel.from_api_call(response)
+        
+    def update_league_scoring_model(self, scoring_model):
+        return self._request('leagues/scoringmodels/' + str(scoring_model.id), 'POST', scoring_model.get_api_dict())
+        
+    def delete_league_scoring_model(self, scoring_model_id):
+        return self._request('leagues/scoringmodels/' + str(scoring_model_id), 'DELETE')
             
     def league_set_championship_round_results(self, league_id, round_number, results):
         data = []
